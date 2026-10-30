@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rollbook – Student records</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root{--ivory:#F9F9F8;--panel:#fff;--sage:#2E4F4F;--sage-dk:#264343;--sage-md:#86ABA3;--ink:#1B2929;--muted:#5C6B69;--line:#E2E4DF;--amber:#D97706;--amber-ink:#8A4A00;--amber-pale:#FBEFDD;--on-sage:#F1F1EC;--dim:#B5C6C3;
+--serif:"Source Serif 4",Georgia,serif;--sans:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ivory);color:var(--ink);font:14px/1.5 var(--sans)}
+button,input,select{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.app{min-height:100vh;display:grid;grid-template-columns:240px minmax(0,1fr)}
+.side{background:var(--sage);color:var(--on-sage);display:flex;flex-direction:column}
+.brand{height:56px;display:flex;align-items:center;padding:0 24px;background:var(--sage-dk);font:600 18px var(--serif);letter-spacing:.3em}
+.nav button{width:100%;display:flex;justify-content:space-between;align-items:center;background:none;border:0;border-bottom:1px solid #ffffff1f;color:var(--dim);padding:17px 22px 17px 24px;font-size:12px;letter-spacing:.07em;text-transform:uppercase;text-align:left;position:relative}
+.nav button:hover{color:#fff;background:#ffffff0d}
+.nav button.on{color:#fff;font-weight:700}
+.nav button.on::before{content:"";position:absolute;left:0;top:50%;width:11px;height:28px;margin-top:-14px;background:var(--amber);border-radius:0 14px 14px 0}
+.nav button span{opacity:.6;font-size:16px}
+.nav{margin-top:12px}
+.foot{margin-top:auto;padding:16px 24px;font-size:12px;color:var(--dim)}
+.bar{height:56px;background:var(--panel);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 clamp(16px,3vw,36px)}
+.search{position:relative;width:min(360px,100%)}
+.search svg{position:absolute;left:11px;top:11px;width:16px;height:16px;stroke:var(--muted);fill:none;stroke-width:2}
+.search input{width:100%;padding-left:34px;background:var(--ivory);border-color:transparent}
+.clock{font-size:13px;color:var(--muted);white-space:nowrap}
+.main{padding:30px clamp(16px,3vw,36px) 56px;max-width:1200px}
+.head{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px}
+h1{font:500 clamp(26px,3vw,32px)/1.2 var(--serif);margin:0}
+.btn{border:1px solid #C9CDC8;background:var(--panel);padding:9px 16px;font-weight:500;border-radius:2px}
+.btn:hover{border-color:var(--sage)}
+.btn.cta{background:var(--amber);border-color:var(--amber);color:#1B1200;font-weight:700;letter-spacing:.03em}
+.btn.cta:hover{background:#c46b05;border-color:#c46b05}
+.view{display:none}.view.on{display:block}
+.panel{background:var(--panel);border:1px solid var(--line);margin-bottom:22px}
+.ph{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid var(--line)}
+.ph h2{margin:0;font-size:14px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.va{background:none;border:0;color:var(--muted);font-size:12px;letter-spacing:.05em;text-transform:uppercase;padding:4px 0}
+.va:hover{color:var(--ink);text-decoration:underline}
+.pb{padding:24px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.cols .panel{margin-bottom:22px}
+.tabs{display:flex;border-bottom:1px solid var(--line);overflow-x:auto}
+.tabs button{background:none;border:0;border-bottom:3px solid transparent;padding:14px 22px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap;margin-bottom:-1px}
+.tabs button:hover{color:var(--ink)}
+.tabs button.on{color:var(--ink);font-weight:700;border-bottom-color:var(--amber)}
+.donut{display:flex;align-items:center;gap:36px;flex-wrap:wrap}
+.donut svg{width:210px;height:210px;flex:none}
+.dc{font:500 38px var(--serif);fill:var(--sage)}
+.dl{font-size:12px;letter-spacing:.08em;fill:var(--muted)}
+.legend{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.legend li{display:flex;align-items:center;gap:10px}
+.legend i{width:11px;height:11px;border-radius:50%}
+.legend b{margin-left:auto;padding-left:20px;font-variant-numeric:tabular-nums}
+.chips{display:flex;margin-top:22px;border:1px solid var(--line);width:max-content;max-width:100%;flex-wrap:wrap}
+.chips span{padding:8px 14px;font-size:12px;letter-spacing:.04em;text-transform:uppercase;border-right:1px solid var(--line);font-variant-numeric:tabular-nums}
+.chips span:last-child{border-right:0}
+.ruler{position:relative;height:60px;border-bottom:1px solid var(--ink);margin-top:34px}
+.ruler i{position:absolute;bottom:0;width:3px;height:42px;margin-left:-1px;background:var(--sage);opacity:.8}
+.ruler i.low{background:var(--amber);opacity:1}
+.ruler .pass{position:absolute;left:40%;top:-22px;bottom:0;border-left:1px dashed var(--amber)}
+.ruler .pass span{position:absolute;top:-4px;left:6px;font-size:11px;color:var(--amber-ink);font-weight:600;white-space:nowrap}
+.axis{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:5px}
+.lst{margin-top:26px;border-top:1px solid var(--line)}
+.lst h3{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:16px 0 4px;font-weight:600}
+.lst div{display:grid;grid-template-columns:54px 1fr auto;gap:8px;padding:8px 0;font-variant-numeric:tabular-nums}
+.lst div span:first-child{color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;padding:12px 16px 24px}
+.st{padding:18px 20px;border:1px solid transparent}
+.st.hi{border-color:var(--amber-ink)}
+.st dt{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.st dd{margin:6px 0 0;font:500 40px/1.1 var(--serif);font-variant-numeric:tabular-nums}
+.tools{display:flex;gap:10px;align-items:center;padding:16px 24px;flex-wrap:wrap}
+input,select{border:1px solid #C9CDC8;background:#fff;padding:9px 11px;min-height:40px;border-radius:2px}
+input:focus,select:focus{border-color:var(--sage);outline:2px solid var(--amber);outline-offset:1px}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:560px}
+th{text-align:left;font-size:11px;letter-spacing:.07em;text-transform:uppercase;font-weight:600;color:var(--muted);padding:11px 24px;border-bottom:2px solid var(--sage);background:#F4F5F2}
+td{padding:13px 24px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}
+tbody tr:hover{background:#FAFAF8}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.roll{color:var(--muted);font-variant-numeric:tabular-nums}
+.lk{background:none;border:0;padding:0;font-weight:600;color:var(--ink);text-align:left}
+.lk:hover{color:var(--sage);text-decoration:underline;text-underline-offset:3px}
+.tag{font-size:12px;font-weight:600;color:var(--sage)}
+.tag.mid{color:var(--muted);font-weight:500}
+.tag.low{color:var(--amber-ink);background:var(--amber-pale);padding:2px 8px;border-left:3px solid var(--amber)}
+.acts{display:flex;gap:2px;justify-content:flex-end}
+.link{background:none;border:0;padding:5px 8px;color:var(--sage);text-decoration:underline;text-underline-offset:3px}
+.link.del{color:var(--amber-ink)}
+.link:hover{background:#F0F2EE}
+.empty{padding:44px 20px;text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--ink);font:500 19px var(--serif);margin-bottom:6px}
+.empty .btn{margin-top:14px}
+.prof{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:start}
+.av{width:92px;height:92px;background:var(--sage);color:#fff;display:grid;place-items:center;font:500 34px var(--serif)}
+.fields{display:grid;grid-template-columns:repeat(3,1fr);gap:18px 28px;margin:0}
+.fields dt{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.fields dd{margin:2px 0 0;font-size:15px;font-variant-numeric:tabular-nums}
+.split{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(230px,.7fr);gap:22px;align-items:start}
+.field{margin-bottom:18px}
+.field label{display:block;font-weight:600;font-size:13px;margin-bottom:6px}
+.field input{width:100%}
+.field small{display:block;color:var(--muted);font-size:12px;margin-top:5px}
+.field input:disabled{background:#F0F1EE;color:var(--muted)}
+.msg{margin-top:14px;min-height:20px}
+.msg.err{color:var(--amber-ink);background:var(--amber-pale);border-left:3px solid var(--amber);padding:8px 12px}
+.rules{margin:0;padding:0 24px;list-style:none}
+.rules li{padding:14px 0;border-top:1px solid var(--line)}
+.rules li:first-child{border-top:0}
+.rules b{display:block}.rules span{color:var(--muted);font-size:13px}
+.hist{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;align-items:end;border-bottom:1px solid var(--ink)}
+.hc{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;font-size:12px}
+.hc u{display:block;width:100%;background:var(--sage);margin-top:3px}
+.hc.low u{background:var(--amber)}
+.hl{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;font-size:11px;color:var(--muted);text-align:center;margin-top:5px}
+.kv{display:flex;justify-content:space-between;padding:10px 0;border-top:1px solid var(--line)}
+.kv:first-child{border-top:0;padding-top:0}
+.concepts{display:grid;grid-template-columns:1fr 1fr;gap:0 32px;margin:0}
+.concepts div{padding:12px 0;border-top:1px solid var(--line)}
+.concepts dt{font-weight:600}.concepts dd{margin:2px 0 0;color:var(--muted);font-size:13px}
+pre{background:var(--sage);color:var(--on-sage);padding:16px 18px;overflow-x:auto;font:13px/1.6 ui-monospace,Consolas,monospace;margin:0 0 12px}
+.note{border-left:3px solid var(--amber);background:var(--amber-pale);padding:12px 16px}
+.toast{position:fixed;bottom:22px;right:22px;background:var(--sage);color:#fff;padding:11px 16px;border-left:3px solid var(--amber);transform:translateY(20px);opacity:0;pointer-events:none;transition:.2s}
+.toast.show{transform:none;opacity:1}
+@media (max-width:900px){
+.app{grid-template-columns:1fr}
+.nav{display:flex;overflow-x:auto;margin:0}
+.nav button{width:auto;white-space:nowrap;border-bottom:3px solid transparent;padding:14px 18px}
+.nav button span,.foot,.nav button.on::before{display:none}
+.nav button.on{border-bottom-color:var(--amber)}
+.cols,.split,.concepts{grid-template-columns:1fr}
+.stats{grid-template-columns:1fr 1fr}
+.fields{grid-template-columns:1fr 1fr}
+.clock{display:none}
+}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side">
+  <div class="brand">ROLLBOOK</div>
+  <nav class="nav" aria-label="Sections">
+    <button data-view="dash" class="on">Dashboard<span>›</span></button>
+    <button data-view="rollbook">Roll book<span>›</span></button>
+    <button data-view="enrol">Enrol student<span>›</span></button>
+    <button data-view="results">Result analysis<span>›</span></button>
+    <button data-view="how">How it works<span>›</span></button>
+  </nav>
+  <div class="foot">SE Computer Engineering, Division B. Records stay in this browser.</div>
+</aside>
+<div>
+  <header class="bar">
+    <label class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="q" type="search" placeholder="Search students by name or roll number" aria-label="Search students"></label>
+    <div class="clock" id="clock"></div>
+  </header>
+  <main class="main">
+    <div class="head"><h1 id="title">Dashboard</h1><button class="btn cta" id="topBtn" data-go="enrol">ENROL STUDENT</button></div>
+
+    <section class="view on" id="v-dash">
+      <div class="cols">
+        <div class="panel"><div class="ph"><h2>Results</h2><button class="va" data-go="results">View all</button></div>
+          <div class="pb"><div class="donut" id="donut"></div><div class="chips" id="chips"></div></div></div>
+        <div class="panel"><div class="ph"><h2>Marks line</h2><button class="va" data-go="rollbook">View all</button></div>
+          <div class="pb"><p style="margin:0;color:var(--muted)" id="rnote"></p>
+            <div class="ruler" id="ruler" aria-hidden="true"><div class="pass"><span>Pass mark 40</span></div></div>
+            <div class="axis" aria-hidden="true"><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span></div>
+            <div class="lst" id="top3"></div></div></div>
+      </div>
+      <div class="panel"><div class="ph"><h2>Recent entries</h2><button class="va" data-go="rollbook">View all</button></div>
+        <div class="tools"><select id="sDash" aria-label="Order recent entries"><option value="recent">Latest entries</option><option value="high">Highest marks</option><option value="low">Lowest marks</option></select></div>
+        <div class="tw" id="tDash"></div></div>
+      <div class="panel"><div class="ph"><h2>Class summary</h2></div><dl class="stats" id="stats"></dl></div>
+    </section>
+
+    <section class="view" id="v-rollbook">
+      <div class="panel">
+        <div class="tabs" id="tabs"><button data-tab="all" class="on">All students</button><button data-tab="dist">Distinction</button><button data-tab="pass">Pass</button><button data-tab="low">Below pass mark</button></div>
+        <div class="tools"><select id="sAll" aria-label="Sort roll book"><option value="recent">Latest entries</option><option value="high">Marks, high to low</option><option value="low">Marks, low to high</option><option value="name">Name, A to Z</option><option value="roll">Roll number</option></select></div>
+        <div class="tw" id="tAll"></div>
+      </div>
+    </section>
+
+    <section class="view" id="v-profile"><div id="prof"></div></section>
+
+    <section class="view" id="v-enrol">
+      <div class="split">
+        <form class="panel" id="form" novalidate><div class="ph"><h2 id="fh">New record</h2></div><div class="pb">
+          <div class="field"><label for="roll">Roll number</label><input id="roll" type="number" min="1" step="1" inputmode="numeric" placeholder="e.g. 2315"><small id="rollHelp">A unique whole number, 1 or higher.</small></div>
+          <div class="field"><label for="name">Student name</label><input id="name" type="text" autocomplete="off" placeholder="e.g. Kavya Nair"></div>
+          <div class="field"><label for="marks">Marks out of 100</label><input id="marks" type="number" min="0" max="100" step="0.5" inputmode="decimal" placeholder="e.g. 78.5"></div>
+          <div style="display:flex;gap:10px"><button class="btn cta" type="submit" id="save">SAVE STUDENT</button><button class="btn" type="button" id="cancel">Cancel</button></div>
+          <div class="msg" id="msg" role="alert"></div></div></form>
+        <div class="panel"><div class="ph"><h2>Record rules</h2></div><ul class="rules">
+          <li><b>Roll number</b><span>Must be unique. Duplicates are rejected, not overwritten.</span></li>
+          <li><b>Name</b><span>Letters, spaces, dots, hyphens and apostrophes only.</span></li>
+          <li><b>Marks</b><span>Any number from 0 to 100. Decimals are fine.</span></li>
+          <li><b>Editing</b><span>Roll number is locked once a record exists. Delete and re-enrol to change it.</span></li></ul></div>
+      </div>
+    </section>
+
+    <section class="view" id="v-results">
+      <div class="panel"><div class="ph"><h2>Marks in bands of ten</h2></div><div class="pb"><div id="hist"></div><p style="color:var(--muted);margin:14px 0 0">Amber bands sit below the pass mark of 40.</p></div></div>
+      <div class="cols">
+        <div class="panel"><div class="ph"><h2>Result categories</h2></div><div class="pb" id="bands"></div></div>
+        <div class="panel"><div class="ph"><h2>Class summary</h2></div><div class="pb" id="summary"></div></div>
+      </div>
+    </section>
+
+    <section class="view" id="v-how">
+      <div class="panel"><div class="ph"><h2>What this page is</h2></div><div class="pb"><div class="note">This is a browser companion to the C++ console project. It does not run or compile the C++ code. Records live in this browser's localStorage, so they stay on this device and survive a refresh.</div></div></div>
+      <div class="panel"><div class="ph"><h2>The record in C++</h2></div><div class="pb">
+<pre>struct Student {
+    int    rollNo;
+    string name;
+    float  marks;
+};
+vector&lt;Student&gt; students;</pre>
+        <span style="color:var(--muted)">Here each record is a JavaScript object with the same three fields, held in an array.</span></div></div>
+      <div class="panel"><div class="ph"><h2>DSA concepts in the console project</h2></div><div class="pb">
+        <dl class="concepts">
+          <div><dt>Structure</dt><dd>Groups roll number, name and marks into one record.</dd></div>
+          <div><dt>Collection</dt><dd>A vector holds every record for display and management.</dd></div>
+          <div><dt>Linear search</dt><dd>Checks records one by one to find a matching roll number.</dd></div>
+          <div><dt>Bubble sort</dt><dd>Repeatedly compares neighbours to order students by marks.</dd></div>
+          <div><dt>Functions</dt><dd>Separate add, display, search and sort into their own routines.</dd></div>
+          <div><dt>Menu loop</dt><dd>A loop with a switch statement drives the console menu.</dd></div>
+        </dl>
+        <p style="color:var(--muted);margin:14px 0 0">On this page, search and sort use the browser's built-in filter and sort rather than hand-written linear search or bubble sort.</p></div></div>
+    </section>
+  </main>
+</div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(() => {
+  const KEY='rollbook-records-v1', OLD='student-management-records-v1', PASS=40, DIST=75, H=3600000, now=Date.now();
+  const sample=[['Aarav Desai',2301,86.5],['Meera Patel',2302,92],['Vihaan Joshi',2303,74],['Kavya Nair',2304,63.5],['Rohan Chaudhary',2305,38],['Sneha Iyer',2306,81],['Dhruv Trivedi',2307,57],['Anika Bhatt',2308,69]].map(([name,rollNo,marks],i)=>({rollNo,name,marks,createdAt:now-(i+1)*H}));
+  const $=id=>document.getElementById(id);
+  let students=load(), editing=null, view='dash', tab='all', open=null;
+  function load(){try{const s=localStorage.getItem(KEY)??localStorage.getItem(OLD);const d=s===null?null:JSON.parse(s);return Array.isArray(d)?d:sample}catch(e){return sample}}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(students))}catch(e){toast('Could not save to this browser.')}}
+  function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),2600)}
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const fmt=n=>Number.isInteger(n)?String(n):n.toFixed(1);
+  const result=m=>m>=DIST?['Distinction','']:m>=PASS?['Pass','mid']:['Below pass mark','low'];
+  const inTab=(s,t)=>t==='all'||(t==='dist'&&s.marks>=DIST)||(t==='pass'&&s.marks>=PASS&&s.marks<DIST)||(t==='low'&&s.marks<PASS);
+  function match(rows,q){q=q.trim().toLowerCase();return q?rows.filter(s=>String(s.rollNo).includes(q)||s.name.toLowerCase().includes(q)):rows}
+  function sort(rows,m){const a=[...rows];
+    if(m==='high')a.sort((x,y)=>y.marks-x.marks);else if(m==='low')a.sort((x,y)=>x.marks-y.marks);
+    else if(m==='name')a.sort((x,y)=>x.name.localeCompare(y.name));else if(m==='roll')a.sort((x,y)=>x.rollNo-y.rollNo);
+    else a.sort((x,y)=>y.createdAt-x.createdAt);return a}
+  function table(rows){
+    const q=$('q').value.trim();
+    if(!rows.length)return students.length?`<div class="empty"><b>${q?'No match for “'+esc(q)+'”':'No students in this group'}</b>Check the spelling or roll number, or switch tabs.</div>`:`<div class="empty"><b>The roll book is empty</b>Enrol your first student to start the register.<br><button class="btn cta" data-go="enrol">ENROL STUDENT</button></div>`;
+    return `<table><thead><tr><th>Roll no.</th><th>Student</th><th class="num">Marks</th><th>Result</th><th class="num">Actions</th></tr></thead><tbody>${rows.map(s=>{const [l,c]=result(s.marks);
+      return `<tr><td class="roll">${s.rollNo}</td><td><button class="lk" data-open="${s.rollNo}">${esc(s.name)}</button></td><td class="num">${fmt(s.marks)}</td><td><span class="tag ${c}">${l}</span></td><td><div class="acts"><button class="link" data-edit="${s.rollNo}" aria-label="Edit ${esc(s.name)}">Edit</button><button class="link del" data-del="${s.rollNo}" aria-label="Delete ${esc(s.name)}">Delete</button></div></td></tr>`}).join('')}</tbody></table>`}
+  function donut(n,g){
+    const R=80,C=2*Math.PI*R,cols=['#2E4F4F','#86ABA3','#D97706'];let acc=0;
+    const arcs=n?g.map((c,i)=>{const L=c/n*C;const e=`<circle cx="105" cy="105" r="${R}" fill="none" stroke="${cols[i]}" stroke-width="24" stroke-dasharray="${L} ${C-L}" stroke-dashoffset="${-acc}" transform="rotate(-90 105 105)"/>`;acc+=L;return e}).join(''):`<circle cx="105" cy="105" r="${R}" fill="none" stroke="#E2E4DF" stroke-width="24"/>`;
+    const pct=n?Math.round((g[0]+g[1])/n*100)+'%':'–';
+    return `<svg viewBox="0 0 210 210" role="img" aria-label="${pct} of students at or above the pass mark">${arcs}<text class="dc" x="105" y="108" text-anchor="middle">${pct}</text><text class="dl" x="105" y="130" text-anchor="middle">PASSING</text></svg>
+    <ul class="legend">${['Distinction','Pass','Below pass mark'].map((l,i)=>`<li><i style="background:${cols[i]}"></i>${l}<b>${g[i]}</b></li>`).join('')}</ul>`}
+  function render(){
+    const n=students.length,sum=students.reduce((a,s)=>a+s.marks,0),top=n?Math.max(...students.map(s=>s.marks)):0;
+    const g=[students.filter(s=>s.marks>=DIST).length,students.filter(s=>s.marks>=PASS&&s.marks<DIST).length,students.filter(s=>s.marks<PASS).length];
+    $('donut').innerHTML=donut(n,g);
+    $('chips').innerHTML=`<span>Distinction: ${g[0]}</span><span>Pass: ${g[1]}</span><span>Below: ${g[2]}</span>`;
+    $('stats').innerHTML=[['Students on roll',n],['Class average',n?(sum/n).toFixed(1):'–'],['Top mark',n?fmt(top):'–'],['At or above pass mark',g[0]+g[1]]].map(([k,v],i)=>`<div class="st ${i===3?'hi':''}"><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+    $('rnote').textContent=n?`Each line is one student. ${g[2]?g[2]+(g[2]===1?' student is':' students are')+' below the pass mark.':'Everyone is at or above the pass mark.'}`:'Marks appear here once students are enrolled.';
+    $('ruler').querySelectorAll('i').forEach(e=>e.remove());
+    $('ruler').insertAdjacentHTML('beforeend',students.map(s=>`<i class="${s.marks<PASS?'low':''}" style="left:${s.marks}%" title="${esc(s.name)}: ${fmt(s.marks)}"></i>`).join(''));
+    $('top3').innerHTML=n?'<h3>Highest marks</h3>'+sort(students,'high').slice(0,3).map(s=>`<div><span>${s.rollNo}</span><span>${esc(s.name)}</span><b>${fmt(s.marks)}</b></div>`).join(''):'';
+    const q=$('q').value;
+    $('tDash').innerHTML=table(sort(students,$('sDash').value).slice(0,5));
+    $('tAll').innerHTML=table(sort(match(students.filter(s=>inTab(s,tab)),q),$('sAll').value));
+    document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
+    analytics(n,sum,g);if(view==='profile')profile();
+  }
+  function analytics(n,sum,g){
+    if(!n){$('hist').innerHTML=$('bands').innerHTML=$('summary').innerHTML='<p style="color:var(--muted);margin:0">Enrol students to see the analysis.</p>';return}
+    const b=Array(10).fill(0);students.forEach(s=>b[Math.min(9,Math.floor(s.marks/10))]++);const mx=Math.max(...b);
+    $('hist').innerHTML=`<div class="hist">${b.map((c,i)=>`<div class="hc ${i<4?'low':''}">${c||''}<u style="height:${c?Math.max(6,Math.round(c/mx*130)):0}px"></u></div>`).join('')}</div><div class="hl">${b.map((_,i)=>`<span>${i*10}${i===9?'–100':''}</span>`).join('')}</div>`;
+    $('bands').innerHTML=[['Distinction','',g[0]],['Pass','',g[1]],['Below pass mark','low',g[2]]].map(([l,k,c])=>`<div class="kv"><span>${l}</span><b>${c} of ${n}</b></div>`).join('');
+    const m=students.map(s=>s.marks).sort((x,y)=>x-y),med=n%2?m[(n-1)/2]:(m[n/2-1]+m[n/2])/2;
+    $('summary').innerHTML=[['Class average',(sum/n).toFixed(2)],['Median',fmt(med)],['Top mark',fmt(m[n-1])],['Lowest mark',fmt(m[0])]].map(([k,v])=>`<div class="kv"><span>${k}</span><b>${v}</b></div>`).join('');
+  }
+  function profile(){
+    const s=students.find(x=>x.rollNo===open);if(!s){show('rollbook');return}
+    const avg=students.reduce((a,x)=>a+x.marks,0)/students.length,d=s.marks-avg,rk=sort(students,'high').findIndex(x=>x.rollNo===s.rollNo)+1;
+    $('title').textContent=s.name;
+    $('prof').innerHTML=`<div class="panel"><div class="ph"><h2>Student record</h2><div><button class="link" data-edit="${s.rollNo}">Edit</button><button class="link del" data-del="${s.rollNo}">Delete</button><button class="va" data-go="rollbook" style="margin-left:12px">‹ Go back</button></div></div>
+      <div class="pb prof"><div class="av" aria-hidden="true">${esc(s.name.split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase())}</div>
+      <dl class="fields"><div><dt>Roll number</dt><dd>${s.rollNo}</dd></div><div><dt>Marks</dt><dd>${fmt(s.marks)} out of 100</dd></div><div><dt>Result</dt><dd>${result(s.marks)[0]}</dd></div>
+      <div><dt>Class rank</dt><dd>${rk} of ${students.length}</dd></div><div><dt>Against class average</dt><dd>${d>=0?'+':'−'}${Math.abs(d).toFixed(1)} marks</dd></div><div><dt>Enrolled on</dt><dd>${new Date(s.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</dd></div></dl></div></div>`;
+  }
+  const titles={dash:'Dashboard',rollbook:'Roll book',results:'Result analysis',how:'How it works'};
+  function show(v){
+    view=v;document.querySelectorAll('.view').forEach(e=>e.classList.toggle('on',e.id==='v-'+v));
+    document.querySelectorAll('.nav button').forEach(e=>e.classList.toggle('on',e.dataset.view===(v==='profile'?'rollbook':v)));
+    $('title').textContent=titles[v]||(v==='enrol'?(editing!==null?'Edit student':'Enrol student'):'');
+    $('topBtn').hidden=v==='enrol';
+    if(v!=='enrol'&&editing!==null)reset();
+    if(v==='profile')profile();window.scrollTo(0,0);
+  }
+  function reset(){editing=null;$('form').reset();$('roll').disabled=false;$('save').textContent='SAVE STUDENT';$('fh').textContent='New record';$('msg').textContent='';$('msg').className='msg';$('rollHelp').textContent='A unique whole number, 1 or higher.'}
+  function edit(r){const s=students.find(x=>x.rollNo===r);if(!s)return;reset();editing=r;$('roll').value=s.rollNo;$('roll').disabled=true;$('rollHelp').textContent='Locked while editing.';$('name').value=s.name;$('marks').value=s.marks;$('save').textContent='UPDATE STUDENT';$('fh').textContent='Edit record';show('enrol');$('name').focus()}
+  function del(r){const s=students.find(x=>x.rollNo===r);if(!s||!confirm(`Delete ${s.name} (roll no. ${r})? This cannot be undone.`))return;students=students.filter(x=>x.rollNo!==r);save();if(view==='profile')show('rollbook');render();toast('Student deleted.')}
+  document.addEventListener('click',e=>{
+    const t=e.target.closest('[data-edit],[data-del],[data-go],[data-open],[data-tab],.nav button');if(!t)return;
+    if(t.dataset.edit)edit(+t.dataset.edit);else if(t.dataset.del)del(+t.dataset.del);
+    else if(t.dataset.open){open=+t.dataset.open;show('profile')}
+    else if(t.dataset.tab){tab=t.dataset.tab;render()}
+    else{const v=t.dataset.go||t.dataset.view;if(v==='enrol')reset();show(v);if(v==='enrol')$('roll').focus();render()}
+  });
+  $('form').addEventListener('submit',e=>{
+    e.preventDefault();const msg=$('msg');msg.className='msg err';
+    const roll=Number($('roll').value),name=$('name').value.trim().replace(/\s+/g,' '),raw=$('marks').value,marks=Number(raw);
+    if(editing===null&&(!Number.isInteger(roll)||roll<1))return msg.textContent='Roll number must be a whole number of 1 or higher.',$('roll').focus();
+    if(editing===null&&students.some(s=>s.rollNo===roll))return msg.textContent=`Roll number ${roll} is already on the roll. Choose a different one.`,$('roll').focus();
+    if(name.length<2||!/^[\p{L}][\p{L}\s.'-]*$/u.test(name))return msg.textContent='Enter a name using letters, spaces, dots, hyphens or apostrophes.',$('name').focus();
+    if(raw===''||!Number.isFinite(marks)||marks<0||marks>100)return msg.textContent='Marks must be a number from 0 to 100.',$('marks').focus();
+    if(editing!==null){const s=students.find(x=>x.rollNo===editing);s.name=name;s.marks=marks;toast('Student updated.')}
+    else{students.push({rollNo:roll,name,marks,createdAt:Date.now()});toast('Student enrolled.')}
+    save();reset();show('rollbook');render();
+  });
+  $('cancel').addEventListener('click',()=>{reset();show('rollbook')});
+  $('q').addEventListener('input',()=>{if(view!=='rollbook')show('rollbook');render()});
+  ['sDash','sAll'].forEach(id=>$(id).addEventListener('change',render));
+  const tick=()=>$('clock').textContent=new Date().toLocaleString('en-IN',{hour:'numeric',minute:'2-digit',hour12:true,day:'numeric',month:'short',year:'numeric'}).replace(',',' ,');
+  tick();setInterval(tick,30000);show('dash');render();
+})();
+</script>
+</body>
+</html>
