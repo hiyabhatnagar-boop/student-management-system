@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Management System</title>
+<style>
+:root{--paper:#f7f7f2;--panel:#fff;--sidebar:#efefe8;--ink:#20251f;--muted:#74796f;--line:#dedfd6;--green:#426b50;--green-dark:#2f503a;--green-pale:#e8efe8;--red:#a5483f;--red-pale:#f8ece9;--gold:#9a7130}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input{font:inherit}
+button{cursor:pointer}
+.app{min-height:100vh;display:grid;grid-template-columns:238px minmax(0,1fr)}
+.sidebar{background:var(--sidebar);border-right:1px solid var(--line);padding:27px 17px;display:flex;flex-direction:column}
+.brand{display:flex;gap:11px;align-items:center;padding:0 10px 29px;border-bottom:1px solid var(--line)}
+.brand-mark{width:34px;height:34px;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:750;font-size:15px}
+.brand strong{display:block;font-size:14px;letter-spacing:-.02em}.brand small{color:var(--muted);font-size:11px}
+.nav-label{font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:#8a8e83;margin:25px 11px 9px;font-weight:700}
+.nav{display:grid;gap:4px}
+.nav button{border:0;background:transparent;color:#565c53;text-align:left;padding:10px 12px;display:flex;align-items:center;gap:11px;font-size:13px;border-left:2px solid transparent}
+.nav button:hover{background:#e7e8df;color:var(--ink)}
+.nav button.active{background:#e2e9e1;color:var(--green-dark);border-left-color:var(--green);font-weight:650}
+.nav-icon{width:17px;text-align:center;font-size:15px}
+.sidebar-foot{margin-top:auto;padding:16px 10px 0;border-top:1px solid var(--line);color:var(--muted);font-size:11px}
+.main{min-width:0;padding:35px clamp(20px,4vw,58px) 55px;max-width:1500px;width:100%;margin:0 auto}
+.topline{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:30px}
+.eyebrow{color:var(--green);font-size:11px;font-weight:750;letter-spacing:.13em;text-transform:uppercase}
+h1{font-size:clamp(25px,3vw,34px);line-height:1.15;letter-spacing:-.045em;margin:7px 0 7px;font-weight:680}
+.subtitle{color:var(--muted);margin:0;font-size:13px}
+.top-actions{display:flex;align-items:center;gap:10px}
+.date-label{font-size:12px;color:var(--muted);white-space:nowrap}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);padding:9px 13px;font-size:12px;font-weight:650}
+.btn:hover{border-color:#aeb8aa;background:#fbfcf9}
+.btn-primary{background:var(--green);border-color:var(--green);color:#fff}
+.btn-primary:hover{background:var(--green-dark);border-color:var(--green-dark)}
+.btn-danger{color:var(--red);border-color:#e6c9c4;background:#fff}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);background:var(--panel);margin-bottom:30px}
+.stat{padding:19px 21px;border-right:1px solid var(--line);min-width:0}
+.stat:last-child{border-right:0}
+.stat-label{font-size:11px;color:var(--muted);font-weight:600}
+.stat-value{font-size:27px;font-weight:680;letter-spacing:-.05em;margin:6px 0 2px}
+.stat-note{font-size:10px;color:var(--muted)}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin:0 0 15px}
+.section-head h2{font-size:17px;letter-spacing:-.025em;margin:0;font-weight:680}
+.section-head p{font-size:12px;color:var(--muted);margin:4px 0 0}
+.toolbar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.search-wrap{position:relative;flex:1;min-width:190px}
+.search-wrap span{position:absolute;left:11px;top:8px;color:var(--muted)}
+input,select{border:1px solid var(--line);background:#fff;color:var(--ink);padding:9px 11px;outline:none;min-height:38px}
+input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 2px #426b5018}
+.search-wrap input{width:100%;padding-left:33px}
+select{font-size:12px}
+.table-shell{border:1px solid var(--line);background:#fff;overflow:hidden}
+.table-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:570px}
+th{text-align:left;background:#f1f2ec;color:#73786e;text-transform:uppercase;letter-spacing:.09em;font-size:10px;font-weight:750;padding:12px 16px;border-bottom:1px solid var(--line)}
+td{padding:14px 16px;border-bottom:1px solid #ecece6;font-size:12px}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:#fafbf8}
+.roll{font-variant-numeric:tabular-nums;color:#687065}
+.student-name{font-weight:650;font-size:13px}
+.initial{display:inline-grid;place-items:center;width:29px;height:29px;background:#e9eee7;color:var(--green-dark);font-size:11px;font-weight:750;margin-right:9px;vertical-align:middle}
+.badge{display:inline-block;padding:4px 8px;font-size:10px;font-weight:700;background:#edf2eb;color:var(--green-dark)}
+.badge.average{background:#f4f0e5;color:var(--gold)}.badge.low{background:var(--red-pale);color:var(--red)}
+.row-actions{display:flex;gap:6px}
+.icon-btn{border:1px solid transparent;background:transparent;color:var(--muted);padding:5px 7px;font-size:11px}
+.icon-btn:hover{background:#f4f4ef;border-color:var(--line);color:var(--ink)}
+.empty{padding:42px 20px;text-align:center;color:var(--muted);font-size:13px}
+.empty strong{display:block;color:var(--ink);font-size:14px;margin-bottom:5px}
+.view{display:none}.view.active{display:block}
+.form-layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(230px,.8fr);gap:22px;align-items:start}
+.form-panel,.info-panel{border:1px solid var(--line);background:#fff;padding:23px}
+.form-panel h2,.info-panel h2{font-size:16px;margin:0 0 5px}
+.form-panel>p,.info-panel>p{font-size:12px;color:var(--muted);margin:0 0 20px}
+.field{margin:0 0 16px}.field label{display:block;font-size:11px;font-weight:700;margin-bottom:6px}
+.field input{width:100%}.field small{display:block;color:var(--muted);font-size:10px;margin-top:5px}
+.form-actions{display:flex;gap:8px;margin-top:20px}
+.message{font-size:12px;margin-top:13px;min-height:18px}.message.success{color:var(--green)}.message.error{color:var(--red)}
+.info-list{padding:0;margin:16px 0 0;list-style:none}
+.info-list li{padding:10px 0;border-top:1px solid var(--line);font-size:12px;color:#555c52}
+.info-list b{color:var(--ink)}
+.analytics-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.analysis-panel{border:1px solid var(--line);background:#fff;padding:20px}
+.analysis-panel h3{font-size:13px;margin:0 0 16px}
+.bar-row{display:grid;grid-template-columns:75px 1fr 35px;gap:9px;align-items:center;margin:12px 0;font-size:11px;color:var(--muted)}
+.bar-track{height:8px;background:#eff0ea}.bar-fill{height:100%;background:var(--green)}
+.about-copy{max-width:760px;border-left:3px solid var(--green);padding:5px 0 5px 20px}
+.about-copy p{color:#5f665c;font-size:13px;line-height:1.8}
+.concept-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:22px}
+.concept{border-top:1px solid var(--line);padding:13px 0}.concept b{font-size:12px}.concept p{font-size:11px;color:var(--muted);margin:5px 0}
+.toast{position:fixed;right:22px;bottom:22px;background:#26382b;color:#fff;padding:12px 17px;font-size:12px;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none;max-width:calc(100vw - 40px)}
+.toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:850px){.app{grid-template-columns:190px minmax(0,1fr)}.stats{grid-template-columns:repeat(2,1fr)}.stat:nth-child(2){border-right:0}.stat:nth-child(-n+2){border-bottom:1px solid var(--line)}.form-layout{grid-template-columns:1fr}}
+@media(max-width:600px){.app{display:block}.sidebar{padding:12px 13px;border-right:0;border-bottom:1px solid var(--line)}.brand{padding:0 4px 10px;border:0}.nav-label,.sidebar-foot{display:none}.nav{display:flex;overflow-x:auto;padding-top:9px}.nav button{white-space:nowrap;padding:8px 10px}.main{padding:24px 15px 40px}.topline{align-items:flex-start;flex-direction:column;margin-bottom:22px}.top-actions{width:100%;justify-content:space-between}.stats{margin-bottom:24px}.stat{padding:14px}.stat-value{font-size:23px}.section-head{align-items:flex-start;flex-direction:column}.analytics-grid,.concept-grid{grid-template-columns:1fr}.toolbar .btn{flex:1}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">SM</div><div><strong>Student Records</strong><small>Academic workspace</small></div></div>
+    <div class="nav-label">Workspace</div>
+    <nav class="nav" aria-label="Main navigation">
+      <button class="active" data-view="dashboard"><span class="nav-icon">▦</span>Dashboard</button>
+      <button data-view="students"><span class="nav-icon">≡</span>All students</button>
+      <button data-view="add"><span class="nav-icon">＋</span>Add student</button>
+      <button data-view="analytics"><span class="nav-icon">▥</span>Analytics</button>
+      <button data-view="about"><span class="nav-icon">ⓘ</span>About project</button>
+    </nav>
+    <div class="sidebar-foot">STUDENT MANAGEMENT SYSTEM<br>DSA · C++ project companion</div>
+  </aside>
+
+  <main class="main">
+    <header class="topline">
+      <div><div class="eyebrow">Academic administration</div><h1 id="pageTitle">Overview</h1><p class="subtitle" id="pageSubtitle">A clear view of student records and academic performance.</p></div>
+      <div class="top-actions"><span class="date-label" id="today"></span><button class="btn btn-primary" id="quickAdd">＋ Add student</button></div>
+    </header>
+
+    <section class="view active" id="view-dashboard">
+      <div class="stats">
+        <div class="stat"><div class="stat-label">Total students</div><div class="stat-value" id="totalStat">0</div><div class="stat-note">Registered records</div></div>
+        <div class="stat"><div class="stat-label">Average marks</div><div class="stat-value" id="averageStat">—</div><div class="stat-note">Across all students</div></div>
+        <div class="stat"><div class="stat-label">Highest marks</div><div class="stat-value" id="highestStat">—</div><div class="stat-note">Top recorded score</div></div>
+        <div class="stat"><div class="stat-label">Passing students</div><div class="stat-value" id="passingStat">0</div><div class="stat-note">Marks of 40 and above</div></div>
+      </div>
+      <div class="section-head"><div><h2>Student records</h2><p>Recently added records, with quick access to key actions.</p></div><button class="btn" id="viewAll">View all students →</button></div>
+      <div class="toolbar"><div class="search-wrap"><span>⌕</span><input id="dashSearch" type="search" placeholder="Search by roll number or name…" aria-label="Search students"></div><button class="btn" id="dashSort">Sort by marks ↓</button></div>
+      <div class="table-shell"><div class="table-scroll" id="dashTable"></div></div>
+    </section>
+
+    <section class="view" id="view-students">
+      <div class="section-head"><div><h2>All students</h2><p>Search, review, sort and manage every student record.</p></div></div>
+      <div class="toolbar"><div class="search-wrap"><span>⌕</span><input id="studentSearch" type="search" placeholder="Search by roll number or name…" aria-label="Search all students"></div><select id="sortSelect" aria-label="Sort students"><option value="recent">Recently added</option><option value="high">Marks: high to low</option><option value="low">Marks: low to high</option><option value="name">Name: A to Z</option></select></div>
+      <div class="table-shell"><div class="table-scroll" id="allTable"></div></div>
+    </section>
+
+    <section class="view" id="view-add">
+      <div class="form-layout">
+        <form class="form-panel" id="studentForm">
+          <h2 id="formHeading">Add a student</h2><p>Enter the student's details below. Roll numbers must be unique.</p>
+          <div class="field"><label for="rollNo">Roll number</label><input id="rollNo" type="number" min="1" step="1" placeholder="e.g. 104" required><small>Use a unique positive roll number.</small></div>
+          <div class="field"><label for="studentName">Student name</label><input id="studentName" type="text" maxlength="60" placeholder="e.g. Aanya Sharma" required><small>Letters and spaces are accepted.</small></div>
+          <div class="field"><label for="marks">Marks</label><input id="marks" type="number" min="0" max="100" step="0.01" placeholder="e.g. 86.5" required><small>Enter a score between 0 and 100.</small></div>
+          <div class="form-actions"><button class="btn btn-primary" type="submit" id="saveBtn">Save student</button><button class="btn" type="button" id="cancelForm">Cancel</button></div>
+          <div class="message" id="formMessage" role="status" aria-live="polite"></div>
+        </form>
+        <aside class="info-panel"><h2>Record guidelines</h2><p>Keep student information consistent for accurate records.</p><ul class="info-list"><li><b>Roll number</b><br>Must be unique and greater than zero.</li><li><b>Student name</b><br>Enter a first and last name if applicable.</li><li><b>Marks</b><br>Use a value from 0 to 100.</li><li><b>Data storage</b><br>Records are saved in this browser on this device.</li></ul></aside>
+      </div>
+    </section>
+
+    <section class="view" id="view-analytics">
+      <div class="section-head"><div><h2>Performance overview</h2><p>A simple breakdown of the current student records.</p></div></div>
+      <div class="analytics-grid">
+        <div class="analysis-panel"><h3>Performance distribution</h3><div id="distribution"></div></div>
+        <div class="analysis-panel"><h3>Academic summary</h3><div id="summary"></div></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-about">
+      <div class="about-copy"><div class="eyebrow">Project notes</div><h2>Organised records. Clearer decisions.</h2><p>This Student Management System is a web-based companion to a beginner C++ Data Structures and Algorithms project. It demonstrates common student-record operations through a simple interface. The website runs in the browser and does not execute the original C++ program.</p><p>The original C++ implementation uses a student structure, a collection of records, functions, linear search and bubble sort. This interface demonstrates equivalent user-facing tasks, with browser storage for persistence.</p></div>
+      <div class="concept-grid">
+        <div class="concept"><b>Structure</b><p>Groups roll number, name and marks into one student record.</p></div>
+        <div class="concept"><b>Collection</b><p>Keeps multiple student records together for display and management.</p></div>
+        <div class="concept"><b>Linear search</b><p>Checks records to find a matching roll number.</p></div>
+        <div class="concept"><b>Bubble sort</b><p>Compares marks and arranges students from highest to lowest.</p></div>
+        <div class="concept"><b>Functions</b><p>Separates tasks such as adding, displaying and searching records.</p></div>
+        <div class="concept"><b>Local storage</b><p>Saves website records in this browser so they remain after refresh.</p></div>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(() => {
+  const KEY = 'student-management-records-v1';
+  const sample = [
+    {rollNo:101,name:'Aanya Sharma',marks:86.5,createdAt:Date.now()-3600000},
+    {rollNo:102,name:'Riya Mehta',marks:92,createdAt:Date.now()-7200000},
+    {rollNo:103,name:'Kabir Singh',marks:74,createdAt:Date.now()-10800000},
+    {rollNo:104,name:'Ishita Verma',marks:63.5,createdAt:Date.now()-14400000}
+  ];
+  let students = loadRecords();
+  let editingRoll = null;
+  const $ = id => document.getElementById(id);
+  function loadRecords(){try{const saved=localStorage.getItem(KEY);return saved===null?sample:JSON.parse(saved)}catch(e){return sample}}
+  function save(){localStorage.setItem(KEY,JSON.stringify(students))}
+  function toast(message){const t=$('toast');t.textContent=message;t.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove('show'),2600)}
+  function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+  function status(m){return m>=75?['Excellent','']:m>=40?['Passing','average']:['Needs support','low']}
+  function tableHTML(rows){
+    if(!rows.length)return '<div class="empty"><strong>No student records found</strong>Add a student or adjust your search.</div>';
+    return `<table><thead><tr><th>Roll number</th><th>Student</th><th>Marks</th><th>Performance</th><th>Actions</th></tr></thead><tbody>${rows.map(s=>{const [label,cls]=status(s.marks);return `<tr><td class="roll">#${s.rollNo}</td><td><span class="initial">${escapeHTML(s.name.split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase())}</span><span class="student-name">${escapeHTML(s.name)}</span></td><td>${Number(s.marks).toFixed(2)}</td><td><span class="badge ${cls}">${label}</span></td><td><div class="row-actions"><button class="icon-btn" data-edit="${s.rollNo}" aria-label="Edit ${escapeHTML(s.name)}">Edit</button><button class="icon-btn" data-delete="${s.rollNo}" aria-label="Delete ${escapeHTML(s.name)}">Delete</button></div></td></tr>`}).join('')}</tbody></table>`;
+  }
+  function bindTableActions(root){root.querySelectorAll('[data-delete]').forEach(b=>b.addEventListener('click',()=>removeStudent(Number(b.dataset.delete))));root.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>editStudent(Number(b.dataset.edit))))}
+  function renderTable(target,rows){$(target).innerHTML=tableHTML(rows);bindTableActions($(target))}
+  function render(){
+    const n=students.length, avg=n?students.reduce((a,s)=>a+Number(s.marks),0)/n:0, high=n?Math.max(...students.map(s=>Number(s.marks))):0;
+    $('totalStat').textContent=n;$('averageStat').textContent=n?avg.toFixed(1):'—';$('highestStat').textContent=n?high.toFixed(1):'—';$('passingStat').textContent=students.filter(s=>s.marks>=40).length;
+    const recent=[...students].sort((a,b)=>b.createdAt-a.createdAt).slice(0,5);
+    renderTable('dashTable',filterRows(recent,$('dashSearch').value));
+    const all=sortRows(filterRows(students,$('studentSearch').value),$('sortSelect').value);renderTable('allTable',all);
+    renderAnalytics();
+  }
+  function filterRows(rows,q){q=q.trim().toLowerCase();return q?rows.filter(s=>String(s.rollNo).includes(q)||s.name.toLowerCase().includes(q)):rows}
+  function sortRows(rows,mode){const a=[...rows];if(mode==='high')a.sort((x,y)=>y.marks-x.marks);else if(mode==='low')a.sort((x,y)=>x.marks-y.marks);else if(mode==='name')a.sort((x,y)=>x.name.localeCompare(y.name));else a.sort((x,y)=>y.createdAt-x.createdAt);return a}
+  function renderAnalytics(){
+    const groups=[['Excellent',students.filter(s=>s.marks>=75).length],['Passing',students.filter(s=>s.marks>=40&&s.marks<75).length],['Needs support',students.filter(s=>s.marks<40).length]];
+    $('distribution').innerHTML=students.length?groups.map(([name,count])=>`<div class="bar-row"><span>${name}</span><div class="bar-track"><div class="bar-fill" style="width:${count/students.length*100}%"></div></div><b>${count}</b></div>`).join(''):'<p class="subtitle">Add student records to see the distribution.</p>';
+    const avg=students.length?students.reduce((a,s)=>a+s.marks,0)/students.length:0;
+    $('summary').innerHTML=`<div class="bar-row"><span>Total records</span><b>${students.length}</b></div><div class="bar-row"><span>Average</span><b>${students.length?avg.toFixed(2):'—'}</b></div><div class="bar-row"><span>Highest score</span><b>${students.length?Math.max(...students.map(s=>s.marks)).toFixed(2):'—'}</b></div><div class="bar-row"><span>Below 40</span><b>${students.filter(s=>s.marks<40).length}</b></div>`;
+  }
+  function showView(name){
+    document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+name));
+    document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===name));
+    const labels={dashboard:['Overview','A clear view of student records and academic performance.'],students:['All students','Search, review and manage every student record.'],add:[editingRoll?'Edit student':'Add a student','Maintain accurate student information.'],analytics:['Analytics','Understand performance across the current records.'],about:['About project','The concepts and implementation behind this project.']};
+    $('pageTitle').textContent=labels[name][0];$('pageSubtitle').textContent=labels[name][1];
+    if(name!=='add'&&editingRoll!==null)resetForm();
+  }
+  function resetForm(){editingRoll=null;$('studentForm').reset();$('formHeading').textContent='Add a student';$('saveBtn').textContent='Save student';$('formMessage').textContent=''}
+  function editStudent(roll){const s=students.find(x=>x.rollNo===roll);if(!s)return;editingRoll=roll;$('rollNo').value=s.rollNo;$('rollNo').disabled=true;$('studentName').value=s.name;$('marks').value=s.marks;$('formHeading').textContent='Edit student';$('saveBtn').textContent='Update student';showView('add');$('rollNo').disabled=true}
+  function removeStudent(roll){const s=students.find(x=>x.rollNo===roll);if(!s||!confirm(`Delete ${s.name} (roll no. ${roll})? This cannot be undone.`))return;students=students.filter(x=>x.rollNo!==roll);save();render();toast('Student record deleted.')}
+  $('studentForm').addEventListener('submit',e=>{
+    e.preventDefault();const roll=Number($('rollNo').value),name=$('studentName').value.trim(),marks=Number($('marks').value);
+    const msg=$('formMessage');msg.className='message error';
+    if(!Number.isInteger(roll)||roll<1){msg.textContent='Enter a valid positive whole-number roll number.';return}
+    if(name.length<2||!/^[\p{L}][\p{L}\s.'-]*$/u.test(name)){msg.textContent='Enter a valid name using letters.';return}
+    if($('marks').value===''||!Number.isFinite(marks)||marks<0||marks>100){msg.textContent='Marks must be between 0 and 100.';return}
+    if(students.some(s=>s.rollNo===roll&&s.rollNo!==editingRoll)){msg.textContent='That roll number already exists.';return}
+    if(editingRoll!==null){const s=students.find(x=>x.rollNo===editingRoll);s.name=name;s.marks=marks;msg.className='message success';msg.textContent='Student updated successfully.';toast('Student record updated.')}
+    else{students.push({rollNo,name,marks,createdAt:Date.now()});msg.className='message success';msg.textContent='Student added successfully.';toast('Student added successfully.')}
+    save();render();setTimeout(()=>{resetForm();$('rollNo').disabled=false;showView('students')},450);
+  });
+  $('cancelForm').addEventListener('click',()=>{resetForm();$('rollNo').disabled=false;showView('students')});
+  $('quickAdd').addEventListener('click',()=>{resetForm();$('rollNo').disabled=false;showView('add')});
+  $('viewAll').addEventListener('click',()=>showView('students'));
+  document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.view==='add'){resetForm();$('rollNo').disabled=false}showView(b.dataset.view)}));
+  $('dashSearch').addEventListener('input',render);$('studentSearch').addEventListener('input',render);$('sortSelect').addEventListener('change',render);
+  let descending=true;$('dashSort').addEventListener('click',()=>{descending=!descending;const rows=[...students].sort((a,b)=>descending?b.marks-a.marks:a.marks-b.marks).slice(0,5);renderTable('dashTable',rows);$('dashSort').textContent=descending?'Sort by marks ↓':'Sort by marks ↑'});
+  $('today').textContent=new Intl.DateTimeFormat('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'}).format(new Date());
+  $('rollNo').disabled=false;render();
+})();
+</script>
+</body>
+</html>
